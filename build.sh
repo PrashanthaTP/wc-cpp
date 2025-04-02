@@ -5,4 +5,4 @@ echo -e "CC : ${CC}"
 echo -e "CXX: ${CXX}"
 echo -en "\e[0m"
 
-cmake -S . -B build -G 'MinGW Makefiles' && { cd build && mingw32-make.exe  ; }
+cmake -S . -B build -G 'MinGW Makefiles' && { cmake --build build ; }
