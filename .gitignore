@@ -1,6 +1,8 @@
 # 
 build/
 .vscode/
+/env.sh
+/local.txt
 # Prerequisites
 *.d
 
