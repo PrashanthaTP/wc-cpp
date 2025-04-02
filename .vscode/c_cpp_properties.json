@@ -35,7 +35,7 @@
             "includePath": [
                 "${myIncludePath}"
             ],
-            "cppStandard": "gnu++14",
+            "cppStandard": "gnu++17",
             "browse": {
                 "path": [
                     "${myIncludePath}",
