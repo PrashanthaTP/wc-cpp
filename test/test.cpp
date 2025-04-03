@@ -47,6 +47,19 @@ const std::filesystem::path inputFilePath_1_notexist{cwd / "inputs/test11.txt"};
 const std::filesystem::path inputFilePath_1_unicode{cwd / "inputs/test1_unicode.txt"};
 const std::filesystem::path inputFilePath_2{cwd / "inputs/test2.txt"};
 
+// template <typename T>
+// struct TestConfig {
+//     T (*func)(const std::string&);
+//     std::string inputFilePath;
+//     T expectedResult;
+// };
+
+// struct TestConfig<uint32_t> testConfigAsciiInput[] = {
+//     {&getByteCount, inputFilePath_1.string(), 453}, {
+//         &getByteCount, inputFilePath_2.string(), 990
+//     }
+// };
+
 TEST(CCWCTest, GetBytesHandleAsciiInput) {
     EXPECT_NO_THROW({
         uint32_t res = getByteCount(inputFilePath_1.string());
@@ -59,7 +72,7 @@ TEST(CCWCTest, GetBytesHandleAsciiInput) {
     });
 }
 
-TEST(CCWCTest, GetBytesHandleUnicodeInput){
+TEST(CCWCTest, GetBytesHandleUnicodeInput) {
     EXPECT_NO_THROW({
         uint32_t res = getByteCount(inputFilePath_1_unicode.string());
         EXPECT_EQ(res, 462);
