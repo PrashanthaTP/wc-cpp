@@ -24,3 +24,19 @@ uint32_t getByteCount(const string& filePath) {
         throw std::runtime_error("Error opening file: " + filePath + "\n");
     }
 }
+uint32_t getLineCount(const string& filePath) {
+    std::ifstream file(filePath, std::ifstream::in);
+    if (file.is_open()) {
+        string line;
+        uint32_t lineCount = 0;
+        while(std::getline(file,line,'\n')){
+            lineCount++;
+        }
+        return lineCount;
+
+    } else {
+        throw std::runtime_error("Error opening file: " + filePath + "\n");
+    }
+}
+
+

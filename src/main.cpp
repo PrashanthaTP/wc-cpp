@@ -28,6 +28,15 @@ int main(int argc, char* argv[]) {
             cerr << e.what();
             exit(EXIT_FAILURE);
         }
+    }
+    else if (string(argv[1]) == "-l") {
+        try {
+            uint32_t nLines = getLineCount(filePath);
+            cout << nLines << " " << getBaseName(filePath) << "\n";
+        } catch (const std::exception& e) {
+            cerr << e.what();
+            exit(EXIT_FAILURE);
+        }
     } else {
         cerr << "Unknown argument: " << "'" << argv[1] << "'" << "\n";
         exit(EXIT_FAILURE);

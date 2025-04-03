@@ -81,3 +81,37 @@ TEST(CCWCTest, GetBytesThrowFileException) {
         },
         std::runtime_error);
 }
+
+TEST(CCWCTest, GetLineCountHandleAsciiInput) {
+    EXPECT_NO_THROW({
+        uint32_t res = getLineCount(inputFilePath_1.string());
+        EXPECT_EQ(res, 5);
+    });
+
+    EXPECT_NO_THROW({
+        uint32_t res = getLineCount(inputFilePath_2.string());
+        EXPECT_EQ(res, 14);
+    });
+}
+
+TEST(CCWCTest, GetLineCountHandleUnicodeInput) {
+    EXPECT_NO_THROW({
+        uint32_t res = getLineCount(inputFilePath_1_unicode.string());
+        EXPECT_EQ(res, 6);
+    });
+}
+
+TEST(CCWCTest, GetLineCountThrowFileException) {
+    const std::string errStr =
+        "Error opening file: " + inputFilePath_1_notexist.string() + "\n";
+    EXPECT_THROW(
+        {
+            try {
+                (void)getLineCount(inputFilePath_1_notexist.string());
+            } catch (const std::exception& e) {
+                EXPECT_STREQ(errStr.c_str(), e.what());
+                throw;
+            }
+        },
+        std::runtime_error);
+}
