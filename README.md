@@ -2,7 +2,16 @@
 # WC Tool in C++
 
 ## Features
-> Todo
+
+```bash
+Usage: ccwc [OPTION] [FILE]
+
+Options:
+  -c     print the byte counts
+  -w     print the word counts
+  -l     print the newline counts
+```
+
 ## Building
 > Todo
 

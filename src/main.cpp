@@ -12,11 +12,24 @@ string getBaseName(const string& filePath) {
     return filePath.substr(filePath.find_last_of("/\\") + 1);
 }
 
-int main(int argc, char* argv[]) {
+const string HELP_STR =
+    "Usage: ccwc [OPTION] [FILE]\n"
+    "\n"
+    "Options:\n"
+    "  -c     print the byte counts\n"
+    "  -w     print the word counts\n"
+    "  -l     print the newline counts\n"
+    "\n"
+    "More Information: https://github.com/PrashanthaTP/wc-cpp\n";
 
+int main(int argc, char* argv[]) {
+    if (string(argv[1]) == "-h" || string(argv[1]) == "--help") {
+        cout << HELP_STR;
+        exit(EXIT_SUCCESS);
+    }
     if (argc < 3) {
         cerr << "Wrong number of arguments\n";
-        cerr << "See help : ./ccwc.exe --help\n";
+        cerr << "See help : ccwc.exe --help\n";
         exit(EXIT_FAILURE);
     }
     std::string filePath{argv[2]};
@@ -46,6 +59,7 @@ int main(int argc, char* argv[]) {
         }
     } else {
         cerr << "Unknown argument: " << "'" << argv[1] << "'" << "\n";
+        cerr << "See --help\n";
         exit(EXIT_FAILURE);
     }
 }
