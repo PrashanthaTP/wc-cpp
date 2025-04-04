@@ -15,4 +15,4 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PRJ_LIB_NAME})
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(GtestSetup)
-add_subdirectory(test)
+add_subdirectory(tests)
