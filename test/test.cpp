@@ -44,7 +44,8 @@ const std::filesystem::path srcFilePath{__FILE__};
 const std::filesystem::path cwd{srcFilePath.parent_path()};
 const std::filesystem::path inputFilePath_1{cwd / "inputs/test1.txt"};
 const std::filesystem::path inputFilePath_1_notexist{cwd / "inputs/test11.txt"};
-const std::filesystem::path inputFilePath_1_unicode{cwd / "inputs/test1_unicode.txt"};
+const std::filesystem::path inputFilePath_1_unicode{cwd /
+                                                    "inputs/test1_unicode.txt"};
 const std::filesystem::path inputFilePath_2{cwd / "inputs/test2.txt"};
 
 // template <typename T>
@@ -59,72 +60,69 @@ const std::filesystem::path inputFilePath_2{cwd / "inputs/test2.txt"};
 //         &getByteCount, inputFilePath_2.string(), 990
 //     }
 // };
+namespace TestUtil {
+template <typename T, typename S>
+void expect_no_throw(T (*func)(const S& input), const S& input, T expectedRes) {
+    EXPECT_NO_THROW({
+        uint32_t res = func(input);
+        EXPECT_EQ(res, expectedRes);
+    });
+}
+//https://stackoverflow.com/questions/23270078/test-a-specific-exception-type-is-thrown-and-the-exception-has-the-right-propert
+template <typename T, typename S, typename E>
+void expect_throw(T (*func)(const S& input), const S& input,
+                  const std::string& errStr) {
+    EXPECT_THROW(
+        {
+            try {
+                (void)func(input);
+            } catch (const std::exception& e) {
+                EXPECT_STREQ(errStr.c_str(), e.what());
+                throw;
+            }
+        },
+        E);
+}
+}
 
 TEST(CCWCTest, GetBytesHandleAsciiInput) {
-    EXPECT_NO_THROW({
-        uint32_t res = getByteCount(inputFilePath_1.string());
-        EXPECT_EQ(res, 453);
-    });
-
-    EXPECT_NO_THROW({
-        uint32_t res = getByteCount(inputFilePath_2.string());
-        EXPECT_EQ(res, 990);
-    });
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getByteCount, inputFilePath_1.string(), 453);
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getByteCount, inputFilePath_2.string(), 990);
 }
 
 TEST(CCWCTest, GetBytesHandleUnicodeInput) {
-    EXPECT_NO_THROW({
-        uint32_t res = getByteCount(inputFilePath_1_unicode.string());
-        EXPECT_EQ(res, 462);
-    });
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getByteCount, inputFilePath_1_unicode.string(), 462);
 }
 
 //https://stackoverflow.com/questions/23270078/test-a-specific-exception-type-is-thrown-and-the-exception-has-the-right-propert
 TEST(CCWCTest, GetBytesThrowFileException) {
     const std::string errStr =
         "Error opening file: " + inputFilePath_1_notexist.string() + "\n";
-    EXPECT_THROW(
-        {
-            try {
-                (void)getByteCount(inputFilePath_1_notexist.string());
-            } catch (const std::exception& e) {
-                EXPECT_STREQ(errStr.c_str(), e.what());
-                throw;
-            }
-        },
-        std::runtime_error);
+    TestUtil::expect_throw<uint32_t, const std::string&, std::runtime_error>(
+        &getByteCount, inputFilePath_1_notexist.string(), errStr);
 }
 
 TEST(CCWCTest, GetLineCountHandleAsciiInput) {
-    EXPECT_NO_THROW({
-        uint32_t res = getLineCount(inputFilePath_1.string());
-        EXPECT_EQ(res, 5);
-    });
-
-    EXPECT_NO_THROW({
-        uint32_t res = getLineCount(inputFilePath_2.string());
-        EXPECT_EQ(res, 14);
-    });
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getLineCount, inputFilePath_1.string(), 5);
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getLineCount, inputFilePath_2.string(), 14);
 }
 
 TEST(CCWCTest, GetLineCountHandleUnicodeInput) {
-    EXPECT_NO_THROW({
-        uint32_t res = getLineCount(inputFilePath_1_unicode.string());
-        EXPECT_EQ(res, 6);
-    });
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getLineCount, inputFilePath_1_unicode.string(), 6);
 }
 
 TEST(CCWCTest, GetLineCountThrowFileException) {
     const std::string errStr =
         "Error opening file: " + inputFilePath_1_notexist.string() + "\n";
-    EXPECT_THROW(
-        {
-            try {
-                (void)getLineCount(inputFilePath_1_notexist.string());
-            } catch (const std::exception& e) {
-                EXPECT_STREQ(errStr.c_str(), e.what());
-                throw;
-            }
-        },
-        std::runtime_error);
+
+    TestUtil::expect_throw<uint32_t, const std::string&, std::runtime_error>(
+        &getLineCount, inputFilePath_1_notexist.string(), errStr);
+}
+
 }
