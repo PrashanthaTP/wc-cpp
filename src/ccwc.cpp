@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 #include "ccwc.hpp"
 
@@ -33,6 +34,25 @@ uint32_t getLineCount(const string& filePath) {
             lineCount++;
         }
         return lineCount;
+
+    } else {
+        throw std::runtime_error("Error opening file: " + filePath + "\n");
+    }
+}
+
+uint32_t getWordCount(const string& filePath) {
+    std::ifstream file(filePath, std::ifstream::in);
+    if (file.is_open()) {
+        string line;
+        uint32_t wordCount = 0;
+        while(std::getline(file,line,'\n')){
+            std::string word;
+            std::istringstream ss(line);
+            while(ss >> word){
+                wordCount += 1;
+            }
+        }
+        return wordCount;
 
     } else {
         throw std::runtime_error("Error opening file: " + filePath + "\n");

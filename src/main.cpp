@@ -28,11 +28,18 @@ int main(int argc, char* argv[]) {
             cerr << e.what();
             exit(EXIT_FAILURE);
         }
-    }
-    else if (string(argv[1]) == "-l") {
+    } else if (string(argv[1]) == "-l") {
         try {
             uint32_t nLines = getLineCount(filePath);
             cout << nLines << " " << getBaseName(filePath) << "\n";
+        } catch (const std::exception& e) {
+            cerr << e.what();
+            exit(EXIT_FAILURE);
+        }
+    } else if (string(argv[1]) == "-w") {
+        try {
+            uint32_t nWords = getWordCount(filePath);
+            cout << nWords << " " << getBaseName(filePath) << "\n";
         } catch (const std::exception& e) {
             cerr << e.what();
             exit(EXIT_FAILURE);

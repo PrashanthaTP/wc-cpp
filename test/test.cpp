@@ -125,4 +125,22 @@ TEST(CCWCTest, GetLineCountThrowFileException) {
         &getLineCount, inputFilePath_1_notexist.string(), errStr);
 }
 
+TEST(CCWCTest, GetWordCountHandleAsciiInput) {
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getWordCount, inputFilePath_1.string(), 69);
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getWordCount, inputFilePath_2.string(), 166);
+}
+
+TEST(CCWCTest, GetWordCountHandleUnicodeInput) {
+    TestUtil::expect_no_throw<uint32_t, const std::string&>(
+        &getWordCount, inputFilePath_1_unicode.string(), 70);
+}
+
+TEST(CCWCTest, GetWordCountThrowFileException) {
+    const std::string errStr =
+        "Error opening file: " + inputFilePath_1_notexist.string() + "\n";
+
+    TestUtil::expect_throw<uint32_t, const std::string&, std::runtime_error>(
+        &getWordCount, inputFilePath_1_notexist.string(), errStr);
 }
