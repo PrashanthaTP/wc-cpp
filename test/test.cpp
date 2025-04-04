@@ -3,6 +3,7 @@
 #include <iostream>
 #include <regex>
 #include <string>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -60,6 +61,47 @@ const std::filesystem::path inputFilePath_2{cwd / "inputs/test2.txt"};
 //         &getByteCount, inputFilePath_2.string(), 990
 //     }
 // };
+
+//TODO :  Check about Value Parameterized Tests in GoogleTest
+struct TestInputParamConfig {
+    std::string filePath;
+    uint32_t byteCount;
+    uint32_t wordCount;
+    uint32_t lineCount;
+};
+
+struct TestInputConfig {
+    std::vector<struct TestInputParamConfig> asciiInput;
+    std::vector<struct TestInputParamConfig> unicodeInput;
+    std::vector<struct TestInputParamConfig> nonExistentInput;
+};
+
+/*
+$ wc test/inputs/*
+   5   69  453 test/inputs/test1.txt
+   6   70  462 test/inputs/test1_unicode.txt
+  14  166  990 test/inputs/test2.txt
+  25  305 1905 total
+  */
+static const struct TestInputConfig gTestInputConfig = {
+    .asciiInput = {{.filePath = inputFilePath_1.string(),
+                    .byteCount = 453,
+                    .wordCount = 69,
+                    .lineCount = 5},
+                   {
+                       .filePath = inputFilePath_2.string(),
+                       .byteCount = 990,
+                       .wordCount = 166,
+                       .lineCount = 14,
+                   }},
+    .unicodeInput = {{
+        .filePath = inputFilePath_1_unicode.string(),
+        .byteCount = 462,
+        .wordCount = 70,
+        .lineCount = 6,
+    }},
+    .nonExistentInput = {{.filePath = inputFilePath_1_notexist.string()}}};
+
 namespace TestUtil {
 template <typename T, typename S>
 void expect_no_throw(T (*func)(const S& input), const S& input, T expectedRes) {
@@ -83,64 +125,77 @@ void expect_throw(T (*func)(const S& input), const S& input,
         },
         E);
 }
-}
+}  // namespace TestUtil
 
 TEST(CCWCTest, GetBytesHandleAsciiInput) {
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getByteCount, inputFilePath_1.string(), 453);
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getByteCount, inputFilePath_2.string(), 990);
+    for (auto input : gTestInputConfig.asciiInput) {
+        TestUtil::expect_no_throw<uint32_t, const std::string&>(
+            &getByteCount, input.filePath, input.byteCount);
+    }
 }
 
 TEST(CCWCTest, GetBytesHandleUnicodeInput) {
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getByteCount, inputFilePath_1_unicode.string(), 462);
+    for (auto input : gTestInputConfig.unicodeInput) {
+        TestUtil::expect_no_throw<uint32_t, const std::string&>(
+            &getByteCount, input.filePath, input.byteCount);
+    }
 }
 
 //https://stackoverflow.com/questions/23270078/test-a-specific-exception-type-is-thrown-and-the-exception-has-the-right-propert
 TEST(CCWCTest, GetBytesThrowFileException) {
     const std::string errStr =
         "Error opening file: " + inputFilePath_1_notexist.string() + "\n";
-    TestUtil::expect_throw<uint32_t, const std::string&, std::runtime_error>(
-        &getByteCount, inputFilePath_1_notexist.string(), errStr);
+    for (auto input : gTestInputConfig.nonExistentInput) {
+        TestUtil::expect_throw<uint32_t, const std::string&,
+                               std::runtime_error>(&getByteCount,
+                                                   input.filePath, errStr);
+    }
 }
 
 TEST(CCWCTest, GetLineCountHandleAsciiInput) {
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getLineCount, inputFilePath_1.string(), 5);
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getLineCount, inputFilePath_2.string(), 14);
+    for (auto input : gTestInputConfig.asciiInput) {
+        TestUtil::expect_no_throw<uint32_t, const std::string&>(
+            &getLineCount, input.filePath, input.lineCount);
+    }
 }
 
 TEST(CCWCTest, GetLineCountHandleUnicodeInput) {
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getLineCount, inputFilePath_1_unicode.string(), 6);
+    for (auto input : gTestInputConfig.unicodeInput) {
+        TestUtil::expect_no_throw<uint32_t, const std::string&>(
+            &getLineCount, input.filePath, input.lineCount);
+    }
 }
 
 TEST(CCWCTest, GetLineCountThrowFileException) {
     const std::string errStr =
         "Error opening file: " + inputFilePath_1_notexist.string() + "\n";
-
-    TestUtil::expect_throw<uint32_t, const std::string&, std::runtime_error>(
-        &getLineCount, inputFilePath_1_notexist.string(), errStr);
+    for (auto input : gTestInputConfig.nonExistentInput) {
+        TestUtil::expect_throw<uint32_t, const std::string&,
+                               std::runtime_error>(&getLineCount,
+                                                   input.filePath, errStr);
+    }
 }
 
 TEST(CCWCTest, GetWordCountHandleAsciiInput) {
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getWordCount, inputFilePath_1.string(), 69);
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getWordCount, inputFilePath_2.string(), 166);
+    for (auto input : gTestInputConfig.asciiInput) {
+        TestUtil::expect_no_throw<uint32_t, const std::string&>(
+            &getWordCount, input.filePath, input.wordCount);
+    }
 }
 
 TEST(CCWCTest, GetWordCountHandleUnicodeInput) {
-    TestUtil::expect_no_throw<uint32_t, const std::string&>(
-        &getWordCount, inputFilePath_1_unicode.string(), 70);
+    for (auto input : gTestInputConfig.unicodeInput) {
+        TestUtil::expect_no_throw<uint32_t, const std::string&>(
+            &getWordCount, input.filePath, input.wordCount);
+    }
 }
 
 TEST(CCWCTest, GetWordCountThrowFileException) {
     const std::string errStr =
         "Error opening file: " + inputFilePath_1_notexist.string() + "\n";
-
-    TestUtil::expect_throw<uint32_t, const std::string&, std::runtime_error>(
-        &getWordCount, inputFilePath_1_notexist.string(), errStr);
+    for (auto input : gTestInputConfig.nonExistentInput) {
+        TestUtil::expect_throw<uint32_t, const std::string&,
+                               std::runtime_error>(&getWordCount,
+                                                   input.filePath, errStr);
+    }
 }
