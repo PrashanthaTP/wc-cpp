@@ -17,6 +17,13 @@ Options:
   -l     print the newline counts
 ```
 
+## Todo
+
+- `-m` option to count characters
+- Reading from standard input
+- Handling when no options are passed
+- Multiple files
+
 ## Building
 
 - Clone the repository.
@@ -36,4 +43,8 @@ cd wc-cpp; ./build.sh
 ./test.sh
 ```
 
+## Acknowledgements
+
+- [Build Your Own wc Tool](https://codingchallenges.fyi/challenges/challenge-wc) from [Coding Challenges
+](https://codingchallenges.fyi/)
 
